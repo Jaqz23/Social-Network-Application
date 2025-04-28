@@ -1,6 +1,6 @@
 ﻿# Social Network Application
 
-This project is a Social Network developed using **ASP.NET Core MVC** (.NET 6/7/8) following the **Onion Architecture** pattern.
+This project is a Social Network developed using **ASP.NET Core MVC** (.NET 8) following the **Onion Architecture** pattern.
 
 ## 📖 About the Project
 
@@ -30,7 +30,7 @@ This Social Network allows users to:
 - ASP.NET Razor Pages
 
 ### Backend
-- C# with ASP.NET Core MVC (6/7/8)
+- C# with ASP.NET Core MVC 8
 - Microsoft Entity Framework Core
 - Microsoft Entity Framework Core SQL Server
 - Microsoft Entity Framework Core Tools
