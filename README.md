@@ -53,16 +53,16 @@ This Social Network allows users to:
 ## 📸 Project Images
 
 ### Login Screen
-![Login Screen](images/login.png)
+![Login Screen](https://github.com/Jaqz23/Social-Network-Application/blob/296fc23bca17d12d144cfb65972b5d49f96be8bc/images/login.png)
 
 ### Home Feed (Posts)
-![Home Feed](images/home-feed.png)
+![Home Feed](https://github.com/Jaqz23/Social-Network-Application/blob/296fc23bca17d12d144cfb65972b5d49f96be8bc/images/home-feed.png)
 
 ### Friends List
-![Friends List](images/friends-list.png)
+![Friends List](https://github.com/Jaqz23/Social-Network-Application/blob/296fc23bca17d12d144cfb65972b5d49f96be8bc/images/Friends%20List.png)
 
 ### Profile Management
-![Profile Management](images/profile-management.png)
+![Profile Management](https://github.com/Jaqz23/Social-Network-Application/blob/296fc23bca17d12d144cfb65972b5d49f96be8bc/images/profile-management.png)
 
 ## 📋 Prerequisites
 
