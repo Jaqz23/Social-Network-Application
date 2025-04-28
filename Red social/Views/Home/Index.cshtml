@@ -1,0 +1,165 @@
+﻿@model List<RS.Core.Application.ViewModels.Post.PostViewModel>
+
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- Sección para crear una nueva publicación -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Crear nueva publicación</h5>
+                    <form method="post" asp-controller="Home" asp-action="Create" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <textarea class="form-control" name="Body" placeholder="¿Qué estás pensando?" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tipo de publicación:</label>
+                            <select class="form-select" name="PublicationType" id="publicationType" required onchange="toggleMediaInputs()">
+                                <option value="TEXT">Texto</option>
+                                <option value="IMAGE">Imagen</option>
+                                <option value="VIDEO">Video de YouTube</option>
+                            </select>
+                        </div>
+                        <!-- Input de imagen -->
+                        <div class="mb-3" id="imageInput">
+                            <label class="form-label">Subir imagen:</label>
+                            <input type="file" class="form-control" name="File" />
+                        </div>
+                        <!-- Input de video (URL de YouTube) -->
+                        <div class="mb-3 d-none" id="videoInput">
+                            <label class="form-label">Enlace de YouTube:</label>
+                            <input type="url" class="form-control" name="Archive" placeholder="Pega el enlace del video aquí..." />
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Publicar</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Listado de publicaciones -->
+            @foreach (var post in Model)
+            {
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-2">
+                            <img src="@post.ProfilePicture" class="rounded-circle me-2" width="40" height="40" />
+                            <strong>@post.UserName</strong>
+                            <span class="text-muted ms-2">@post.PostDate.ToLocalTime().ToString("g")</span>
+                        </div>
+                        <p>@post.Body</p>
+
+                        <!-- Mostrar imagen o video si existe -->
+                        @if (!string.IsNullOrEmpty(post.Archive) && post.PublicationType == "IMAGE")
+                        {
+                            <img src="@post.Archive" class="img-fluid rounded" />
+                        }
+                        else if (post.PublicationType == "VIDEO" && !string.IsNullOrEmpty(post.Archive))
+                        {
+                            var embedUrl = post.Archive.Replace("watch?v=", "embed/").Split('&')[0];
+                            <div class="ratio ratio-16x9">
+                                <iframe src="@embedUrl" allowfullscreen></iframe>
+                            </div>
+                        }
+
+                        <!-- Botones de acción (Editar/Eliminar solo si es el dueño del post) -->
+                        @if (User.Identity.IsAuthenticated && User.Identity.Name == post.UserName)
+                        {
+                            <div class="mt-2">
+                                <a asp-controller="Home" asp-action="Edit" asp-route-id="@post.Id" class="btn btn-sm btn-outline-primary">✏️ Editar</a>
+                                <a asp-controller="Home" asp-action="Delete" asp-route-id="@post.Id" class="btn btn-sm btn-outline-danger">🗑️ Eliminar</a>
+                            </div>
+                        }
+
+                        <!-- Comentarios -->
+                        <div class="mt-3">
+                            <h6>Comentarios (@post.Comments.Count)</h6>
+                            @foreach (var comment in post.Comments)
+                            {
+                                <div class="d-flex mb-2">
+                                    <img src="@comment.ProfilePicture" class="rounded-circle me-2" width="30" height="30" />
+                                    <div>
+                                        <strong>@comment.UserName</strong>
+                                        <p class="mb-1">@comment.Content</p>
+                                        <small class="text-muted">@comment.CommentDate.ToLocalTime().ToString("g")</small>
+
+                                        <!-- Botón para responder -->
+                                        <button class="btn btn-sm btn-outline-primary reply-btn" data-commentid="@comment.Id">Responder</button>
+
+                                        <!-- Formulario de respuesta (oculto por defecto) -->
+                                        <form method="post" asp-controller="Comment" asp-action="Reply" class="reply-form mt-2 d-none">
+                                            <input type="hidden" name="PostID" value="@post.Id" />
+                                            <input type="hidden" name="ParentCommentId" value="@comment.Id" />
+                                            <input type="hidden" name="User_Id" value="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value" />
+
+                                            <div class="input-group">
+                                                <input type="text" name="Content" class="form-control" placeholder="Escribe una respuesta..." required />
+                                                <button type="submit" class="btn btn-primary btn-sm">Responder</button>
+                                            </div>
+                                        </form>
+
+                                        <!-- Mostrar respuestas -->
+                                        @if (comment.Replies != null && comment.Replies.Any())
+                                        {
+                                            <div class="ms-4 mt-2 border-start ps-3">
+                                                @foreach (var reply in comment.Replies)
+                                                {
+                                                    <div class="d-flex mb-2">
+                                                        <img src="@reply.ProfilePicture" class="rounded-circle me-2" width="25" height="25" />
+                                                        <div>
+                                                            <strong>@reply.UserName</strong>
+                                                            <p class="mb-1">@reply.Content</p>
+                                                            <small class="text-muted">@reply.CommentDate.ToLocalTime().ToString("g")</small>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            <!-- Formulario para agregar un comentario -->
+                            <form method="post" asp-controller="Comment" asp-action="Create">
+                                <input type="hidden" name="PostID" value="@post.Id" />
+                                <input type="hidden" name="User_Id" value="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value" />
+
+                                <div class="input-group mt-2">
+                                    <input type="text" name="Content" class="form-control" placeholder="Escribe un comentario..." required />
+                                    <button type="submit" class="btn btn-primary">Comentar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Script para alternar entre subir imagen o pegar enlace de YouTube -->
+<!-- Mostrar formulario de respuesta al hacer clic en el boton "Responder" -->
+<script>
+    function toggleMediaInputs() {
+        var type = document.getElementById("publicationType").value;
+        var imageInput = document.getElementById("imageInput");
+        var videoInput = document.getElementById("videoInput");
+
+        if (type === "IMAGE") {
+            imageInput.classList.remove("d-none");
+            videoInput.classList.add("d-none");
+        } else if (type === "VIDEO") {
+            videoInput.classList.remove("d-none");
+            imageInput.classList.add("d-none");
+        } else {
+            imageInput.classList.add("d-none");
+            videoInput.classList.add("d-none");
+        }
+    }
+
+    document.querySelectorAll('.reply-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            this.nextElementSibling.classList.toggle('d-none');
+        });
+    });
+</script>

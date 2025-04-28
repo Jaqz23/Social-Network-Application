@@ -1,0 +1,50 @@
+﻿@using RS.Core.Application.ViewModels.User
+@model LoginViewModel
+
+@{
+    ViewData["Title"] = "Iniciar Sesión";
+}
+
+<div class="row mt-5">
+    <div class="col-6 offset-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h3 class="text-center mb-4">Iniciar Sesión</h3>
+
+                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+                @if (Model.HasError)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <p>@Model.Error</p>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                <form method="post" asp-controller="User" asp-action="Index">
+                    <!-- Correo -->
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">Correo Electrónico</label>
+                        <input class="form-control" asp-for="Email" placeholder="Ingresa tu correo">
+                    </div>
+
+                    <!-- Contraseña -->
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label">Contraseña</label>
+                        <input class="form-control" asp-for="Password" type="password" placeholder="Ingresa tu contraseña">
+                    </div>
+
+                    <!-- Boton de Iniciar Sesion -->
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary px-5">Iniciar Sesión</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <p>¿No tienes cuenta? <a asp-controller="User" asp-action="Register" class="link-primary">Regístrate aquí</a></p>
+            <p>¿Olvidaste la contraseña? <a asp-controller="User" asp-action="ForgotPassword" class="link-primary">Recupérala aquí</a></p>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,109 @@
+﻿@model RS.Core.Application.ViewModels.User.ProfileViewModel
+
+@{
+    ViewData["Title"] = "Mi Perfil";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Mi Perfil</h5>
+
+                    <!-- Mensajes de éxito/error -->
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @TempData["Success"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <form method="post" asp-controller="Profile" asp-action="Update" enctype="multipart/form-data">
+                        <input type="hidden" asp-for="Id" />
+
+                        <!-- Foto de perfil -->
+                        <div class="text-center mb-3">
+                            <img src="@Model.ProfilePicture" class="rounded-circle" width="120" height="120" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Actualizar foto de perfil</label>
+                            <input type="file" class="form-control" asp-for="File" />
+                            <span class="text-danger" asp-validation-for="File"></span>
+                        </div>
+
+                        <!-- Nombre -->
+                        <div class="mb-3">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" class="form-control" asp-for="FirstName" required />
+                            <span class="text-danger" asp-validation-for="FirstName"></span>
+                        </div>
+
+                        <!-- Apellido -->
+                        <div class="mb-3">
+                            <label class="form-label">Apellido</label>
+                            <input type="text" class="form-control" asp-for="LastName" required />
+                            <span class="text-danger" asp-validation-for="LastName"></span>
+                        </div>
+
+                        <!-- Correo -->
+                        <div class="mb-3">
+                            <label class="form-label">Correo electrónico</label>
+                            <input type="email" class="form-control" asp-for="Email" required />
+                            <span class="text-danger" asp-validation-for="Email"></span>
+                        </div>
+
+                        <!-- Teléfono -->
+                        <div class="mb-3">
+                            <label class="form-label">Teléfono</label>
+                            <input type="tel" class="form-control" asp-for="Phone" required />
+                            <span class="text-danger" asp-validation-for="Phone"></span>
+                        </div>
+
+                        <!-- Contraseña -->
+                        <div class="mb-3">
+                            <label class="form-label">Nueva Contraseña (Opcional)</label>
+                            <input type="password" class="form-control" asp-for="Password" />
+                            <span class="text-danger" asp-validation-for="Password"></span>
+                        </div>
+
+                        <!-- Confirmar Contraseña -->
+                        <div class="mb-3">
+                            <label class="form-label">Confirmar Contraseña</label>
+                            <input type="password" class="form-control" asp-for="ConfirmPassword" />
+                            <span class="text-danger" asp-validation-for="ConfirmPassword"></span>
+                        </div>
+
+                        <!-- Botón de Guardar -->
+                        <button type="submit" class="btn btn-primary w-100">Guardar Cambios</button>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary w-100 mt-2">Cancelar</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script para ocultar alertas automáticamente después de 5 segundos -->
+<script>
+    setTimeout(function () {
+        let alerts = document.querySelectorAll(".alert");
+        alerts.forEach(alert => {
+            let bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+        });
+    }, 5000);
+</script>
+
+<!-- Incluir scripts de validación de ASP.NET -->
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,78 @@
+﻿@using RS.Core.Application.ViewModels.User
+@using RS.Core.Application.Dtos.Account
+@using RS.Core.Application.Helpers
+@inject IHttpContextAccessor httpContext
+
+@{
+    var User = httpContext.HttpContext.Session.Get<AuthenticationResponse>("user");
+    var isAdmin = User != null ? User.Roles.Any(r => r == "Admin") : false;
+    var isBasic = User != null ? User.Roles.Any(r => r == "Basic") : false;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - RS</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div class="d-flex flex-column flex-shrink-0 p-3 bg-dark text-white" style="width: 280px; height: 100vh; position: fixed;">
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 text-white text-decoration-none">
+                <span class="fs-4">🌐 SocialApp</span>
+            </a>
+            <hr>
+
+            @if (User != null)
+            {
+
+                <!-- Perfil del usuario en el sidebar -->
+                <div class="text-center mb-3">
+                    <img src="@(!string.IsNullOrEmpty(User.ProfilePicture) ? User.ProfilePicture : "/images/default-avatar.png")"
+                         alt="Foto de perfil" class="rounded-circle border" width="80" height="80"
+                         onerror="this.onerror=null; this.src='/images/default-avatar.png';">
+                    <p class="mt-2"><strong>@User.UserName</strong></p>
+                </div>
+                <hr>
+
+               
+
+                <!-- Opciones del menú -->
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" asp-controller="Home" asp-action="Index">🏠 Inicio</a>
+                    </li>
+                    <li>
+                        <a class="nav-link text-white" asp-controller="Friend" asp-action="Index">👥 Amigos</a>
+                    </li>
+                    <li>
+                        <a class="nav-link text-white" asp-controller="Profile" asp-action="Index">⚙️ Mi Perfil</a>
+                    </li>
+                </ul>
+
+              
+                <!-- Botón de Cerrar Sesión -->
+                <div class="mt-auto">
+                    <a asp-controller="User" asp-action="LogOut" class="btn btn-danger w-100">Cerrar sesión</a>
+                </div>
+            }
+        </div>
+
+        <!-- Contenido principal -->
+        <div class="container-fluid" style="margin-left: 300px; padding-top: 20px;">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

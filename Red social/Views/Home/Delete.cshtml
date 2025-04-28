@@ -1,0 +1,21 @@
+﻿@model RS.Core.Application.ViewModels.Post.SavePostViewModel
+
+@{
+    ViewData["Title"] = "Eliminar Publicación";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-body text-center">
+            <h5>¿Seguro que quieres eliminar esta publicación?</h5>
+            <p class="text-muted">@Model.Body</p>
+
+            <form method="post" asp-controller="Home" asp-action="DeletePost">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>
+
